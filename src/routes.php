@@ -39,7 +39,8 @@ Route::group(['middleware' => \PanicHD\PanicHD\Helpers\LaravelVersion::authMiddl
     // Open Ticket create page with optional parameters set by URL
     Route::get("$main_route_path/create/{parameters?}", 'PanicHD\PanicHD\Controllers\TicketsController@create')
       ->where('parameters', '(.*)')
-      ->name("$main_route.create");
+      ->name("$main_route.create")
+      ->middleware('PanicHD\PanicHD\Middleware\IsAdminMiddleware');
 
     // Open Ticket edit page with optional parameters set by URL
     Route::get("$main_route_path/{ticket}/edit/{parameters?}", 'PanicHD\PanicHD\Controllers\TicketsController@edit')
@@ -188,17 +189,19 @@ Route::group(['middleware' => \PanicHD\PanicHD\Helpers\LaravelVersion::authMiddl
             ->name("$admin_route.priority.reorder");
 
         //Agents management routes (ex. http://url/panichd/agent)
-        Route::resource("$admin_route_path/agent", 'PanicHD\PanicHD\Controllers\AgentsController', [
-            'names' => [
-                'index'   => "$admin_route.agent.index",
-                'store'   => "$admin_route.agent.store",
-                'create'  => "$admin_route.agent.create",
-                'update'  => "$admin_route.agent.update",
-                'show'    => "$admin_route.agent.show",
-                'destroy' => "$admin_route.agent.destroy",
-                'edit'    => "$admin_route.agent.edit",
-            ],
-        ]);
+        //Disable Temporarily
+        
+        // Route::resource("$admin_route_path/agent", 'PanicHD\PanicHD\Controllers\AgentsController', [
+        //     'names' => [
+        //         'index'   => "$admin_route.agent.index",
+        //         'store'   => "$admin_route.agent.store",
+        //         'create'  => "$admin_route.agent.create",
+        //         'update'  => "$admin_route.agent.update",
+        //         'show'    => "$admin_route.agent.show",
+        //         'destroy' => "$admin_route.agent.destroy",
+        //         'edit'    => "$admin_route.agent.edit",
+        //     ],
+        // ]);
 
         //Agents management routes (ex. http://url/panichd/agent)
         Route::resource("$admin_route_path/category", 'PanicHD\PanicHD\Controllers\CategoriesController', [

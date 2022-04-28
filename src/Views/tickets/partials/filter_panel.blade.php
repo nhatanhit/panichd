@@ -18,9 +18,10 @@
 
 			@include('panichd::tickets.partials.filter_blocks')
 		@endif
-
-		{!! link_to_route($setting->grab('main_route').'.create', trans('panichd::lang.btn-create-new-ticket'), null, ['class' => 'btn btn-light float-right']); !!}
-
+		@if ($u->currentLevel() == 3)
+			{!! link_to_route($setting->grab('main_route').'.create', trans('panichd::lang.btn-create-new-ticket'), null, ['class' => 'btn btn-light float-right']); !!}
+		@endif
+		
 		@if ($u->currentLevel() == 1)
 			<h2 class="text-center" style="margin: 0px;">{!! trans('panichd::lang.index-my-tickets') !!}</h2>
 		@endif

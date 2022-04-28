@@ -3,6 +3,7 @@
 namespace PanicHD\PanicHD\Controllers;
 
 use App\Http\Controllers\Controller;
+
 use Cache;
 use Carbon\Carbon;
 use DB;
@@ -24,6 +25,7 @@ use PanicHD\PanicHD\Traits\CacheVars;
 use PanicHD\PanicHD\Traits\Purifiable;
 use PanicHD\PanicHD\Traits\TicketFilters;
 use Validator;
+use App\Models\Game;
 
 class TicketsController extends Controller
 {
@@ -72,7 +74,6 @@ class TicketsController extends Controller
     public function getTicketCollectionFrom($ticketList)
     {
         $collection = Ticket::visible();
-
         if ($ticketList == 'search') {
             if (!session()->has('search_fields')) {
                 // Load an empty table
@@ -278,6 +279,7 @@ class TicketsController extends Controller
             'panichd_tickets.content AS content',
             'panichd_tickets.intervention AS intervention',
             'panichd_tickets.status_id as status_id',
+            'panichd_tickets.point as ticket_point',
             'panichd_statuses.name AS status',
             'panichd_statuses.color AS color_status',
             'panichd_priorities.color AS color_priority',
@@ -343,9 +345,9 @@ class TicketsController extends Controller
             ->withCount('internalNotes');
 
         $collection = $datatables->of($collection);
-
+        
         \Carbon\Carbon::setLocale(config('app.locale'));
-
+            
         $this->renderTicketTable($collection, $ticketList);
 
         // method rawColumns was introduced in laravel-datatables 7, which is only compatible with >L5.4
@@ -552,7 +554,10 @@ class TicketsController extends Controller
                 .e('<button type="button" class="float-right" onclick="$(this).closest(\'.popover\').popover(\'hide\');">&times;</button> ')
                 .trans('panichd::lang.table-change-priority').'" data-content="'.e($html).'">'.e($ticket->priority).'</a>';
         });
-
+        $collection->editColumn('ticket_point', function($ticket) {
+            // return get_class($ticket);
+            return $ticket->ticket_point;
+        });
         $collection->editColumn('owner_name', function ($ticket) {
             if ($ticket->owner_name == '') {
                 $return = trans('panichd::lang.deleted-member');
@@ -671,9 +676,7 @@ class TicketsController extends Controller
         ];
 
         $this->validateFilters($request);
-
         $data = array_merge($data, $this->ticketCounts($request, $ticketList));
-
         return view('panichd::tickets.index', $data);
     }
 
@@ -816,7 +819,6 @@ class TicketsController extends Controller
         })->count() == 0) {
             $request->session()->forget('panichd_filter_agent');
         }
-
         return ['counts' => $counts, 'filters' => $filters];
     }
 
@@ -1136,13 +1138,14 @@ class TicketsController extends Controller
     public function create($parameters = null)
     {
         $data = $this->create_edit_data();
-
+        
         if (!is_null($parameters)) {
             $data = $this->ticket_URL_parameters($data, $parameters);
         }
 
         $data['categories'] = $this->member->getNewTicketCategories();
-
+        $data['games'] = $this->member->getTicketGames();
+        
         $data['a_notifications'] = [
             'note'  => ($data['a_current']['agent_id'] != auth()->user()->id ? [$data['a_current']['agent_id']] : []),
             'reply' => ($data['a_current']['owner_id'] != auth()->user()->id ? [$data['a_current']['owner_id']] : []),
@@ -1169,7 +1172,7 @@ class TicketsController extends Controller
         $data['ticket'] = $ticket;
 
         $data['categories'] = $this->member->getEditTicketCategories();
-
+        $data['games'] = $this->member->getTicketGames();
         // Ticket comments
         $all_comments = $ticket->comments()->with('notifications');
         $comments = clone $all_comments;
@@ -1260,6 +1263,7 @@ class TicketsController extends Controller
 
             $a_current['cat_id'] = $ticket->category_id;
             $a_current['agent_id'] = $ticket->agent_id;
+            $a_current['game_id'] = $ticket->game_id;
         } else {
             // Defaults
             $a_current['owner_id'] = auth()->user()->id;
@@ -1279,7 +1283,8 @@ class TicketsController extends Controller
             } else {
                 $a_current['cat_id'] = Category::orderBy('name')->first()->id;
             }
-
+            //Default game
+            $a_current['game_id'] =  Game::orderBy('name')->first()->id;
             // Default agent
             $a_current['agent_id'] = $this->member->id;
         }
@@ -1573,7 +1578,8 @@ class TicketsController extends Controller
         }
 
         $ticket->category_id = $request->category_id;
-
+        $ticket->game_id = $request->game_id;
+        $ticket->point = $request->point;
         if ($permission_level == 1 or $request->input('agent_id') == 'auto') {
             $ticket->autoSelectAgent();
         } else {
@@ -2016,7 +2022,8 @@ class TicketsController extends Controller
             // Ticket will be unread for assigned agent
             $ticket->read_by_agent = 0;
         }
-
+        $ticket->game_id = $request->game_id;
+        $ticket->point = $request->point;
         $ticket->save();
 
         if (Setting::grab('ticket_attachments_feature')) {
@@ -2183,6 +2190,7 @@ class TicketsController extends Controller
      */
     public function complete(Request $request, $id)
     {
+        
         if ($this->permToClose($id) == 'yes') {
             $original_ticket = $this->tickets->findOrFail($id);
             $ticket = clone $original_ticket;
@@ -2194,41 +2202,26 @@ class TicketsController extends Controller
             $reason_text = trans('panichd::lang.complete-by-user', ['user' => $this->member->name]);
             $member_reason = $a_clarification = false;
 
-            if ($this->member->currentLevel() > 1) {
-                if (!$ticket->intervention_html and !$request->exists('blank_intervention')) {
-                    return redirect()->back()->with('warning', trans('panichd::lang.show-ticket-complete-blank-intervention-alert'));
-                } else {
-                    $status_id = $request->input('status_id');
+            // if ($this->member->currentLevel() > 1) {
+            //     if (!$ticket->intervention_html and !$request->exists('blank_intervention')) {
+            //         return redirect()->back()->with('warning', trans('panichd::lang.show-ticket-complete-blank-intervention-alert'));
+            //     } else {
+            //         $status_id = $request->input('status_id');
 
-                    try {
-                        Models\Status::findOrFail($status_id);
-                    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-                        return redirect()->back()->with('warning', trans('panichd::lang.show-ticket-complete-bad-status'));
-                    }
-                }
+            //         try {
+            //             Models\Status::findOrFail($status_id);
+            //         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            //             return redirect()->back()->with('warning', trans('panichd::lang.show-ticket-complete-bad-status'));
+            //         }
+            //     }
 
-                $ticket->status_id = $status_id;
-            } else {
-                // Verify Closing Reason
-                if ($ticket->has('category.closingReasons')) {
-                    if (!$request->exists('reason_id')) {
-                        return redirect()->back()->with('warning', trans('panichd::lang.show-ticket-modal-complete-blank-reason-alert'));
-                    }
-
-                    try {
-                        $reason = Models\Closingreason::findOrFail($request->input('reason_id'));
-                        $member_reason = $reason->text;
-                    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-                        return redirect()->back()->with('warning', trans('panichd::lang.show-ticket-complete-bad-reason-id'));
-                    }
-
-                    $reason_text .= trans('panichd::lang.colon').$member_reason;
-                    $ticket->status_id = $reason->status_id;
-                } else {
-                    $ticket->status_id = Setting::grab('default_close_status_id');
-                }
-            }
-
+            //     $ticket->status_id = $status_id;
+            // } else {
+            //     // Verify Closing Reason
+            //     $ticket->status_id = Setting::grab('default_close_status_id');
+            // }
+            $ticket->status_id = Setting::grab('default_close_status_id');
+            
             // Add Closing Reason to intervention field
             $date = date(trans('panichd::lang.date-format'), time());
             $had_intervention = $ticket->intervention == '' ? false : true;
@@ -2252,6 +2245,9 @@ class TicketsController extends Controller
             }
 
             $ticket->save();
+            $ticketPoint = $ticket->point;
+            $this->member->point += $ticketPoint;
+            $this->member->save();
 
             event(new TicketUpdated($original_ticket, $ticket));
 

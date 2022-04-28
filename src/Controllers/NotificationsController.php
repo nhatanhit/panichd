@@ -77,7 +77,9 @@ class NotificationsController extends Controller
         }
 
         // Send notifications
-        $this->sendNotification($a_to, $data);
+        //[CHANGE CODE] Disable sending email
+
+        // $this->sendNotification($a_to, $data);
     }
 
     public function ticketStatusUpdated(Ticket $original_ticket, Ticket $ticket)
@@ -106,7 +108,9 @@ class NotificationsController extends Controller
         }
 
         // Send notifications
-        $this->sendNotification($a_to, $data);
+        
+        //[CHANGE CODE] Disable sending email
+        // $this->sendNotification($a_to, $data);
     }
 
     public function ticketAgentUpdated(Ticket $original_ticket, Ticket $ticket)

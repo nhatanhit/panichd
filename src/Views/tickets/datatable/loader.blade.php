@@ -50,9 +50,10 @@
 			@endif
 			{ data: 'intervention', name: 'intervention' },
 			{ data: 'status', name: 'panichd_statuses.name' },
+			{ data: 'ticket_point', name: 'ticket_point'},
 			@if (session('panichd_filter_agent')=="" && $u->currentLevel() > 1)
 				{ data: 'agent', name: 'agent.name' },
-			@endif				
+			@endif
 			@if( $u->currentLevel() > 1 )
 				{ data: 'priority', name: 'panichd_priorities.name', "orderData": [1, 3, 4, 5], "orderSequence": ['desc', 'asc']},
 				@if (session('panichd_filter_owner')=="")

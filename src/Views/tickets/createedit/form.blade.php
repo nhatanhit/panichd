@@ -43,7 +43,7 @@
 
         <div class="form-group row" style="margin-bottom: 1.5em"><!-- OWNER -->
 
-            <label for="owner_id" class="{{ $u->currentLevel()==1 ? 'col-lg-2' : 'col-lg-3' }} level_class col-form-label tooltip-info" data-level-1-class="col-lg-2" data-level-2-class="col-lg-3" title="{{ trans('panichd::lang.create-ticket-owner-help') }}"> *{{trans('panichd::lang.owner')}}{{trans('panichd::lang.colon')}} <span class="fa fa-question-circle" style="color: #bbb"></span></label>
+            <label for="owner_id" class="{{ $u->currentLevel()==1 ? 'col-lg-2' : 'col-lg-3' }} level_class col-form-label tooltip-info" data-level-1-class="col-lg-2" data-level-2-class="col-lg-3" title="{{ trans('panichd::lang.create-ticket-owner-help') }}"> *{{trans('ticket.player')}}{{trans('panichd::lang.colon')}} <span class="fa fa-question-circle" style="color: #bbb"></span></label>
 
             <div class="{{ $u->currentLevel()==1 ? 'col-lg-10' : 'col-lg-9' }} level_class" data-level-1-class="col-lg-10" data-level-2-class="col-lg-9">
                 <select id="owner_id" name="owner_id" class="generate_default_select2 form-control" style="display: none; width: 100%">
@@ -185,7 +185,29 @@
             </div>
         </div>
 
-        @if ($u->currentLevel() > 1)
+        <div class="form-group row"><!-- GAMES -->
+            {!! CollectiveForm::label('game_id', '*' . trans('game.nav-game') . trans('panichd::lang.colon'), [
+                'class' => ($u->currentLevel()==1 ? 'col-lg-2' : 'col-lg-3').' col-form-label  level_class',
+                'data-level-1-class' => 'col-lg-2',
+                'data-level-2-class' => 'col-lg-3'
+            ]) !!}
+            <div class="{{ $u->currentLevel()==1 ? 'col-lg-10' : 'col-lg-9' }} level_class" data-level-1-class="col-lg-10" data-level-2-class="col-lg-9">
+                {!! CollectiveForm::select('game_id', $games, $a_current['game_id'], ['id'=> 'game_id', 'class' => 'form-control', 'required' => 'required']) !!}
+            </div>
+        </div>
+        <div class="form-group row"><!-- POINT -->
+            {!! CollectiveForm::label('point', '*' . trans('ticket.point') . trans('panichd::lang.colon'), [
+                'class' => ($u->currentLevel()==1 ? 'col-lg-2' : 'col-lg-3').' col-form-label level_class',
+                'data-level-1-class' => 'col-lg-2',
+                'data-level-2-class' => 'col-lg-3'
+            ]) !!}
+            <div class="{{ $u->currentLevel()==1 ? 'col-lg-10' : 'col-lg-9' }} level_class" data-level-1-class="col-lg-10" data-level-2-class="col-lg-9">
+                {!! CollectiveForm::text('point', isset($ticket) ? $ticket->point : 0 , ['class' => 'form-control', 'required' => 'required', 'placeholder' => trans('ticket.create-ticket-point-desc')]) !!}
+                <div class="jquery_error_text"></div>
+            </div>
+        </div>
+
+        {{-- @if ($u->currentLevel() > 1)
         <div class="jquery_level2_show">
             <div class="form-group row"><!-- AGENT -->
                 {!! CollectiveForm::label('agent_id', trans('panichd::lang.agent') . trans('panichd::lang.colon'), [
@@ -221,8 +243,8 @@
         </div>
         @else
             {!! CollectiveForm::hidden('agent_id', 'auto') !!}
-        @endif
-
+        @endif --}}
+        {!! CollectiveForm::hidden('agent_id', 'auto') !!}
         @if ($u->currentLevel() > 1)
             </div><div class="jquery_level2_class col-md-8" data-class="col-md-8">
         @endif

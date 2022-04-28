@@ -15,18 +15,19 @@
 				<td>{{ trans('panichd::lang.table-description') }}</td>
 			@endif
 			<td>{{ trans('panichd::lang.table-intervention') }}</td>
-			<td>{{ trans('panichd::lang.table-status') }}</td>            
+			<td>{{ trans('panichd::lang.table-status') }}</td>
+			<td>Point</td>
 			@if (session('panichd_filter_agent')=="" && $u->currentLevel() > 1)
-				<td>{{ trans('panichd::lang.table-agent') }}</td>	
-			@endif			
+				<td>{{ trans('member.member-creator') }}</td>
+			@endif
 			@if( $u->currentLevel() > 1 )
 				<td>{{ trans('panichd::lang.table-priority') }}</td>
 				
 				@if (session('panichd_filter_owner')=="")
-					<td>{{ trans('panichd::lang.table-owner') }}</td>
+					<td>{{ trans('member.member-player') }}</td>
 					@if ($setting::grab('departments_feature'))
 						<td>{{ trans('panichd::lang.table-department') }}</td>
-					@endif					
+					@endif
 				@endif
 				@if ($ticketList == 'complete')
 					<td>{{ trans('panichd::lang.table-completed_at') }}</td>

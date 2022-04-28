@@ -343,7 +343,22 @@ trait MemberTrait
             return $categories->lists('name', 'id');
         }
     }
-
+    /**
+     * Get List of Game where user has permission to create new tickets on
+     *  @return array
+     */
+    public function getTicketGames() {
+        if ($this->isAdmin()) {
+            $games = \App\Models\Game::orderBy('name');
+        } else {
+            return  array();
+        }
+        if (LaravelVersion::min('5.3.0')) {
+            return $games->pluck('name', 'id');
+        } else {
+            return $games->lists('name', 'id');
+        }
+    }
     /**
      * Get categories where user has permission to edit tickets.
      *

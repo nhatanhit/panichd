@@ -8,11 +8,12 @@
 	<a class="dropdown-item {!! $tools->fullUrlIs(action('\PanicHD\PanicHD\Controllers\CategoriesController@index').'*') ? "active" : "" !!}" href="{{ action('\PanicHD\PanicHD\Controllers\CategoriesController@index') }}">{{ trans('panichd::admin.nav-categories') }}</a>
 	<a class="dropdown-item {!! $tools->fullUrlIs(action('\PanicHD\PanicHD\Controllers\PrioritiesController@index').'*') ? "active" : "" !!}" href="{{ action('\PanicHD\PanicHD\Controllers\PrioritiesController@index') }}">{{ trans('panichd::admin.nav-priorities') }}</a>
 	<a class="dropdown-item {!! $tools->fullUrlIs(action('\PanicHD\PanicHD\Controllers\StatusesController@index').'*') ? "active" : "" !!}" href="{{ action('\PanicHD\PanicHD\Controllers\StatusesController@index') }}">{{ trans('panichd::admin.nav-statuses') }}</a>
+	<a class="dropdown-item {!! $tools->fullUrlIs(action('\App\Http\Controllers\TMS\GameController@index').'*') ? "active" : "" !!}" href="{{ action('\App\Http\Controllers\TMS\GameController@index') }}">{{ trans('game.nav-game') }}</a>
 
 	<li class="dropdown-divider"></li>
 	
 	<a class="dropdown-item {!! $tools->fullUrlIs(action('\PanicHD\PanicHD\Controllers\MembersController@index').'*') ? "active" : "" !!}" href="{{ action('\PanicHD\PanicHD\Controllers\MembersController@index') }}">{{ trans('panichd::admin.nav-members') }}</a>
-	<a class="dropdown-item {!! $tools->fullUrlIs(action('\PanicHD\PanicHD\Controllers\AgentsController@index').'*') ? "active" : "" !!}" href="{{ action('\PanicHD\PanicHD\Controllers\AgentsController@index') }}">{{ trans('panichd::admin.nav-agents') }}</a>
+	{{-- <a class="dropdown-item {!! $tools->fullUrlIs(action('\PanicHD\PanicHD\Controllers\AgentsController@index').'*') ? "active" : "" !!}" href="{{ action('\PanicHD\PanicHD\Controllers\AgentsController@index') }}">{{ trans('panichd::admin.nav-agents') }}</a> --}}
 	<a class="dropdown-item {!! $tools->fullUrlIs(action('\PanicHD\PanicHD\Controllers\AdministratorsController@index').'*') ? "active" : "" !!}" href="{{ action('\PanicHD\PanicHD\Controllers\AdministratorsController@index')}}">{{ trans('panichd::admin.nav-administrators') }}</a>
 
 	<li class="dropdown-divider"></li>

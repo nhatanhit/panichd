@@ -3,5 +3,6 @@
 @append
 
 @section('footer')
+    <!--start script -->
     <script src="{{ asset('vendor/panichd/js/datatables/datatables-dt-' . PanicHD\PanicHD\Helpers\Cdn::DataTables . '-r-' . PanicHD\PanicHD\Helpers\Cdn::DataTablesResponsive . '.min.js') }}"></script>
 @append

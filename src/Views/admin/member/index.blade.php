@@ -31,8 +31,9 @@
                         <td>{{ trans('panichd::admin.table-name') }}</td>
 						<td>{{ trans('panichd::admin.table-email') }}</td>
 						<td>{{ trans('panichd::admin.role') }}</td>
-						<td>{{ trans('panichd::admin.member-table-own-tickets') }}</td>
-						<td>{{ trans('panichd::admin.member-table-assigned-tickets') }}</td>
+						<td>{{ trans('member.member-assigned-quest') }}</td>
+						<td>{{ trans('member.member-created-quest') }}</td>
+						<td>{{ trans('member.member-point')}}</td>
 						<td>{{ trans('panichd::admin.table-action') }}</td>
                     </tr>
                 </thead>
@@ -44,14 +45,15 @@
 						<td>
 						@if ($member->panichd_admin == '1')
 							<button type="button" disabled="disabled" class="btn btn-danger btn-xs">{{ trans('panichd::admin.admin') }}</button>
-						@elseif ($member->panichd_agent == '1')
-							<a href="{{ route($setting->grab('admin_route') . '.agent.index')}}" class="btn btn-warning btn-xs">{{ trans('panichd::lang.agent') }}</button>
+						{{-- @elseif ($member->panichd_agent == '1')
+							<a href="{{ route($setting->grab('admin_route') . '.agent.index')}}" class="btn btn-warning btn-xs">{{ trans('panichd::lang.agent') }}</button> --}}
 						@else
 							<button type="button" disabled="disabled" class="btn btn-light btn-default btn-xs">{{ trans('panichd::lang.user') }}</button>
 						@endif
 						</td>
 						<td>{{ $member->tickets_as_owner_count }}</td>
 						<td>{{ $member->tickets_as_agent_count }}</td>
+						<td>{{ $member->point }}</td>
 						<td>
                             <button type="button" class="btn btn-light btn-default btn_member_modal" data-member_id="{{ $member->id }}" data-member_name="{{ $member->name }}" data-member_email="{{ $member->email }}" data-route="update" data-form_action="{{ route($setting->grab('admin_route').'.member.update', ['member' => $member->id ]) }}">{{ trans('panichd::admin.btn-edit') }}</button>
 							@if ($member->panichd_admin != '1')

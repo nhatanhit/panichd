@@ -19,11 +19,13 @@
 			</ul>
 		</li>
 	@else
-		<li class="nav-item {!! $tools->fullUrlIs(action('\PanicHD\PanicHD\Controllers\TicketsController@create')) ? "active" : "" !!}">
-			<a class="nav-link" href="{{ action('\PanicHD\PanicHD\Controllers\TicketsController@create') }}" title="{{ trans('panichd::lang.nav-create-ticket-title') }}">
-			<span>{{ trans('panichd::lang.nav-create-ticket') }}</span>
-			</a>
-		</li>
+		@if($u->isAdmin())
+			<li class="nav-item {!! $tools->fullUrlIs(action('\PanicHD\PanicHD\Controllers\TicketsController@create')) ? "active" : "" !!}">
+				<a class="nav-link" href="{{ action('\PanicHD\PanicHD\Controllers\TicketsController@create') }}" title="{{ trans('panichd::lang.nav-create-ticket-title') }}">
+				<span>{{ trans('panichd::lang.nav-create-ticket') }}</span>
+				</a>
+			</li>
+		@endif
 	@endif
 @endsection
 
@@ -66,7 +68,7 @@
 			$tools->fullUrlIs(action('\PanicHD\PanicHD\Controllers\DashboardController@index').'*') ||
 			$tools->fullUrlIs(action('\PanicHD\PanicHD\Controllers\StatusesController@index').'*') ||
 			$tools->fullUrlIs(action('\PanicHD\PanicHD\Controllers\PrioritiesController@index').'*') ||
-			$tools->fullUrlIs(action('\PanicHD\PanicHD\Controllers\AgentsController@index').'*') ||
+			// $tools->fullUrlIs(action('\PanicHD\PanicHD\Controllers\AgentsController@index').'*') ||
 			$tools->fullUrlIs(action('\PanicHD\PanicHD\Controllers\MembersController@index').'*') ||
 			$tools->fullUrlIs(action('\PanicHD\PanicHD\Controllers\CategoriesController@index').'*') ||
 			$tools->fullUrlIs(action('\PanicHD\PanicHD\Controllers\NoticesController@index').'*') ||

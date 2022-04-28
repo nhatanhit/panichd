@@ -103,21 +103,6 @@
 
 		// Complete modal submit button
 		$('#complete_form_submit').click(function(e){
-			@if ($u->currentLevel() > 1 && $u->canManageTicket($ticket->id))
-				// Agent / Admin
-				@if (!$ticket->intervention_html)
-					if (!$('#blank_intervention_check').prop('checked')){
-						alert('{{ trans('panichd::lang.show-ticket-complete-blank-intervention-alert') }}');
-						return false;
-					}
-				@endif
-			@else
-				// User Level
-				if (!$("#complete-ticket-form input[name='reason_id']:checked").val()) {
-					alert('{{ trans('panichd::lang.show-ticket-modal-complete-blank-reason-alert') }}');
-					return false;
-				}
-			@endif
 			$('#complete-ticket-form').submit();
 		});
 	});
