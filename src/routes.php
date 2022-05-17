@@ -262,6 +262,20 @@ Route::group(['middleware' => \PanicHD\PanicHD\Helpers\LaravelVersion::authMiddl
             ],
         ]);
 
+        //panichd/game/list
+        Route::get("$admin_route_path/game/list", [
+            'as'   => $admin_route.'.dashboard.game',
+            'uses' => 'PanicHD\PanicHD\Controllers\GameController@index',
+        ]);
+        Route::get("$admin_route_path/game/new", [
+            'as'   => $admin_route.'.dashboard.new.game',
+            'uses' => 'PanicHD\PanicHD\Controllers\GameController@new',
+        ]);
+        Route::post("$admin_route_path/game/store", [
+            'as'   => $admin_route.'.game.store',
+            'uses' => 'PanicHD\PanicHD\Controllers\GameController@store',
+        ]);
+
         //Tickets demo data route (ex. http://url/panichd/demo-seeds/)
         // Route::get("$admin_route/demo-seeds", 'PanicHD\PanicHD\Controllers\InstallController@demoDataSeeder');
     });
