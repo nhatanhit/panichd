@@ -349,7 +349,7 @@ trait MemberTrait
      */
     public function getTicketGames() {
         if ($this->isAdmin()) {
-            $games = \App\Models\Game::orderBy('name');
+            $games = \PanicHD\PanicHD\Models::orderBy('name');
         } else {
             return  array();
         }

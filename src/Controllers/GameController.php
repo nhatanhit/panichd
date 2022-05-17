@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use PanicHD\PanicHD\Models\Setting;
 use Illuminate\Support\Facades\Session;
 
-use App\Models\Game;
+use PanicHD\PanicHD\Models\Game;
 class GameController extends Controller {
     /**
      * Display the login view.

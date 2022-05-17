@@ -25,7 +25,7 @@ use PanicHD\PanicHD\Traits\CacheVars;
 use PanicHD\PanicHD\Traits\Purifiable;
 use PanicHD\PanicHD\Traits\TicketFilters;
 use Validator;
-use App\Models\Game;
+use PanicHD\PanicHD\Models\Game;
 
 class TicketsController extends Controller
 {
