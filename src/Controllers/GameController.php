@@ -42,6 +42,6 @@ class GameController extends Controller {
         $game->description = $request->description;
         $game->save();
         Session::flash('status', trans('panichd::lang.category-name-has-been-created', ['name' => $request->name]));
-        return redirect()->action('\PanicHD\PanicHD\GameController@index');
+        return redirect()->action('\PanicHD\PanicHD\Controllers\GameController@index');
     }
 }
